@@ -1,4 +1,5 @@
 
+import * as THREE from 'three';
 import metaversefile from 'metaversefile';
 const { useApp, useLoaders, useFrame, useScene, useInternals, useLocalPlayer, useActivate, useUse, useWear, usePhysics, getAppByPhysicsId, useCleanup } = metaversefile;
 
@@ -12,6 +13,13 @@ export default e => {
     const app = useApp();
     const { components } = app;
     const physics = usePhysics();
+
+    const floorPhysicsId = physics.addBoxGeometry(
+        new THREE.Vector3(0, -1000, 0),
+        new THREE.Quaternion(),
+        new THREE.Vector3(1000, 2000, 1000).multiplyScalar(0.5),
+        false
+    );
 
     const loadModel = ( params ) => {
 
@@ -36,11 +44,16 @@ export default e => {
 
     useCleanup(() => {
 
-        // todo
+        physics.removeGeometry(floorPhysicsId);
 
     });
 
-    let pod = loadModel({ filePath: baseUrl, fileName: 'assets/space_pod.glb', pos: { x: 0, y: 0, z: 0 } } ).then( result => { vehicleObj = result } );
+    let pod = loadModel({ filePath: baseUrl, fileName: 'assets/space_pod.glb', pos: { x: 0, y: 0, z: 0 } } ).then( result => {
+
+        physics.addGeometry( result );
+        app.add( result );
+
+    });
 
     return app;
 
