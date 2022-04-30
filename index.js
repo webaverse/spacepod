@@ -30,7 +30,7 @@ export default e => {
     );
 
     const placeHolders = [];
-    const doors = { speed: 0.05, left: null, right: null, state: 'closed', offset: 0, offsetMax: 5 };
+    const doors = { speed: 0.05, left: null, right: null, colliderL: null, colliderR: null, state: 'closed', offset: 0, offsetMax: 5 };
     const raycaster = new THREE.Raycaster();
     const tmpVec3a = new THREE.Vector3();
 
@@ -177,6 +177,12 @@ export default e => {
         doors.left.updateWorldMatrix();
         doors.right.updateWorldMatrix();
 
+        doors.colliderL.position.copy(doors.left.position);
+        doors.colliderR.position.copy(doors.right.position);
+
+        physics.setTransform(doors.colliderL);
+        physics.setTransform(doors.colliderR);
+
     };
 
     //
@@ -220,8 +226,14 @@ export default e => {
 
         });
 
-        physics.addGeometry( podMesh );
+        app.add( doors.left );
+        app.add( doors.right );
         app.add( podMesh );
+
+        doors.colliderL = physics.addGeometry( doors.left );
+        doors.colliderR = physics.addGeometry( doors.right );
+        physics.addGeometry( podMesh );
+
         loadNftWallets();
 
     });
