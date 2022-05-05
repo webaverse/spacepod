@@ -1,5 +1,6 @@
 {
     "name": "space-pod",
+    "description": "a spacepod ",
     "start_url": "index.js",
     "components": [
         {
